@@ -97,12 +97,83 @@ pnpm build
 
 ## Database Schema
 
-- **codeTable**: Lưu trữ code (HTML, CSS, JS)
-- **projectTable**: Dự án của user
-- **classTable**: Lớp học (giáo viên tạo)
-- **studentTable**: Học sinh tham gia lớp
-- **assignmentTable**: Bài tập từ giáo viên
-- **submitTable**: Bài nộp của học sinh
+```mermaid
+erDiagram
+    codeTable {
+        uuid id PK
+        text user_email
+        text html
+        text css
+        text javascript
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    projectTable {
+        uuid id PK
+        text user_email
+        text name
+        text description
+        boolean shared
+        text shared_content
+        uuid original_code_id FK
+        uuid code_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    classTable {
+        uuid id PK
+        text teacher_email
+        text class_code UK
+        text name
+        text description
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    studentTable {
+        uuid id PK
+        uuid class_id FK
+        text user_email
+        boolean verified
+        text name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    assignmentTable {
+        uuid id PK
+        uuid class_id FK
+        uuid original_code_id FK
+        text name
+        text description
+        timestamp due_date
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    submitTable {
+        uuid id PK
+        uuid assignment_id FK
+        uuid student_id FK
+        uuid code_id FK
+        boolean rated
+        integer point
+        text feedback
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    codeTable ||--o{ projectTable : "original_code_id"
+    codeTable ||--o{ projectTable : "code_id"
+    codeTable ||--o{ assignmentTable : "original_code_id"
+    codeTable ||--o{ submitTable : "code_id"
+    classTable ||--o{ studentTable : "has students"
+    classTable ||--o{ assignmentTable : "has assignments"
+    assignmentTable ||--o{ submitTable : "has submissions"
+    studentTable ||--o{ submitTable : "submits"
+```
 
 ## License
 
