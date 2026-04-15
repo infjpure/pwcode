@@ -1,4 +1,3 @@
-import { noReview, reviewedCode } from "@/contants/example-code";
 import { fileNames } from "@/contants/sandpack";
 
 export const systemReviewCodePrompt = `
