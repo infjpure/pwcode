@@ -14,19 +14,22 @@ type Props = {
 const SaveRemote = ({ codeId }: Props) => {
   const { sandpack } = useSandpack();
   const { files } = sandpack;
-  const saveCode = useDebouncedCallback(async () => {
+
+  const saveCode = useDebouncedCallback(async (currentFiles: typeof files) => {
     const { error } = await updateCodeByIdAction(codeId, {
-      html: files[fileNames.html].code,
-      css: files[fileNames.css].code,
-      javascript: files[fileNames.javascript].code,
+      html: currentFiles[fileNames.html].code,
+      css: currentFiles[fileNames.css].code,
+      javascript: currentFiles[fileNames.javascript].code,
     });
     if (error) {
       console.error(error);
     }
   }, 2000);
+
   useEffect(() => {
-    saveCode();
+    saveCode(files);
   }, [files, saveCode]);
+
   return null;
 };
 

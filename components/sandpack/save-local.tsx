@@ -12,24 +12,25 @@ type Props = {
 const SaveLocal = ({ localFileName }: Props) => {
   const { sandpack } = useSandpack();
   const { files } = sandpack;
+
   const debounced = useDebouncedCallback(
-    // function
-    () => {
+    (currentFiles: typeof files) => {
       localStorage.setItem(
         localFileName,
         JSON.stringify({
-          html: files[fileNames.html].code,
-          css: files[fileNames.css].code,
-          javascript: files[fileNames.javascript].code,
+          html: currentFiles[fileNames.html].code,
+          css: currentFiles[fileNames.css].code,
+          javascript: currentFiles[fileNames.javascript].code,
         })
       );
     },
-    // delay in ms
     1000
   );
+
   useEffect(() => {
-    debounced();
+    debounced(files);
   }, [debounced, files]);
+
   return null;
 };
 

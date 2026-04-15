@@ -1,6 +1,7 @@
 "use client";
 import { CodeSelect } from "@/lib/types";
 import { useEffect, useState } from "react";
+import Loading from "../shared/loading";
 import SaveLocal from "./save-local";
 import SaveRemote from "./save-remote";
 import SPEditor from "./sp-editor";
@@ -11,14 +12,21 @@ type Props = {
 };
 
 const SPProject = ({ code, type }: Props) => {
+  const [isMounted, setIsMounted] = useState(false);
   const [codeTemp, setCodeTemp] = useState(code);
+
   useEffect(() => {
-    if (localStorage.getItem(`my-code-${code.id}`)) {
-      setCodeTemp(
-        JSON.parse(localStorage.getItem(`my-code-${code.id}`) as string)
-      );
+    const local = localStorage.getItem(`my-code-${code.id}`);
+    if (local) {
+      setCodeTemp(JSON.parse(local));
+    } else {
+      setCodeTemp(code);
     }
-  }, [code.id]);
+    setIsMounted(true);
+  }, [code.id, code]);
+
+  if (!isMounted) return <Loading />;
+
   return (
     <SPEditor code={codeTemp}>
       {type === "my-code" && <SaveRemote codeId={code.id} />}
